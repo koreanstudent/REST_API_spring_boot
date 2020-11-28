@@ -1,7 +1,7 @@
 package com.studey.restapi.events;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -20,20 +20,24 @@ public class EventController {
 
     private final EventRepository eventRepository;
 
+    private final ModelMapper modelMapper;
 
-    public EventController(EventRepository eventRepository) {
+
+    public EventController(EventRepository eventRepository, ModelMapper modelMapper) {
         this.eventRepository = eventRepository;
+        this.modelMapper = modelMapper;
     }
 
     @PostMapping
-    public ResponseEntity createEvent(@RequestBody Event event) {
+    public ResponseEntity createEvent(@RequestBody EventDto eventDto) {
+
+        Event event = modelMapper.map(eventDto,Event.class);
 
         Event newEvent = this.eventRepository.save(event);
 
 
         // HATEOS가 제공하는 linkTo, methodOn 사용
         URI createdUrl = linkTo(EventController.class).slash(newEvent.getId()).toUri(); // location 헤더에 담김
-        event.setId(10);
 
         return ResponseEntity.created(createdUrl).body(event);
 
