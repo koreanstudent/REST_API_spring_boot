@@ -41,8 +41,7 @@ public class EventControllerTests {
 
     @Test
     public void createEvent() throws Exception{
-        Event event = Event.builder()
-                .id(100)
+        EventDto event = EventDto.builder()
                 .name("spring")
                 .description("rest api")
                 .beginEnrollmentDateTime(LocalDateTime.of(2018,11,11,21,21))
@@ -53,9 +52,6 @@ public class EventControllerTests {
                 .maxPrice(200)
                 .limitOfEnrollment(100)
                 .location("강남역")
-                .free(true)
-                .offline(false)
-                .eventStatus(EventStatus.PUBLISHED)
                 .build();
 
 //        event.setId(10);
@@ -78,5 +74,36 @@ public class EventControllerTests {
 
     }
 
+    @Test
+    public void createEvent_Bad_Request() throws Exception{
+        Event event = Event.builder()
+                .id(100)
+                .name("spring")
+                .description("rest api")
+                .beginEnrollmentDateTime(LocalDateTime.of(2018,11,11,21,21))
+                .closeEnrollmentDateTime(LocalDateTime.of(2018,11,24,21,21))
+                .beginEventDateTime(LocalDateTime.of(2018,11,25,21,21))
+                .endEventDateTime(LocalDateTime.of(2018,11,29,21,21))
+                .basePrice(200)
+                .maxPrice(200)
+                .limitOfEnrollment(100)
+                .location("강남역")
+                .free(true)
+                .offline(false)
+                .eventStatus(EventStatus.PUBLISHED)
+                .build();
+
+
+        mockMvc.perform(post("/api/events/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaTypes.HAL_JSON)// Hypertext Application Language
+                .content(objectMapper.writeValueAsString(event)))  // 객체를 JSON으로 변환
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+
+
+        ;
+
+    }
 
 }
