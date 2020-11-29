@@ -32,4 +32,19 @@ public class Event {
     @Enumerated(EnumType.STRING) // Enum 순서가 꼬일수도있어 string으로 권장
     private EventStatus eventStatus = EventStatus.DRAFT;
 
+    public void update() {
+        if(this.basePrice == 0 && this.maxPrice == 0){
+            this.free =true;
+        }else {
+            this.free = false;
+        }
+
+        if("".equals(this.location) || this.location == null){  // 자바 11은 isblank
+            this.offline =false;
+        }else {
+            this.offline = true;
+        }
+
+
+    }
 }
